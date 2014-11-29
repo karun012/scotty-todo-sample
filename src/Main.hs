@@ -48,6 +48,9 @@ app = do
     middleware $ staticPolicy (noDots >-> addBase "static")
     get "/" $ do 
         file "./static/html/index.html"
+    get "/todos" $ do
+        todoItems <- webM $ gets todos
+        json $ M.elems todoItems
     get "/:todoId" $ do 
         todoId <- param "todoId"
         todoItems <- webM $ gets todos
@@ -69,5 +72,7 @@ app = do
                     webM $ modify $ \st -> let nextUid = nextId st + 1
                                                todoWithId = D.Todo (D.text t) (Just nextUid)
                                            in st { nextId = nextUid, todos = M.insert nextUid todoWithId (todos st) }
-                    c <- webM $ gets nextId
-                    text $ fromString $ show c
+                    identifier <- webM $ gets nextId
+                    todoItems <- webM $ gets todos
+                    let todo = M.lookup identifier todoItems
+                    json todo
