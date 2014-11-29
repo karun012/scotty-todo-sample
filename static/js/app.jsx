@@ -67,12 +67,16 @@ define(['react', 'http', 'underscore', 'underscore.string'], function (React, ht
             });
         },
         addItem: function (text) {
-            var todo;
+            var todo, self;
+            self = this;
             todo = { text: text };
-            http({uri: 'todo', method: 'POST', body: todo}).then(this.todoAdded);
+            http({uri: 'todo', method: 'POST', body: todo}).then(function (response, createdAt) {
+                var todoWithId = _.extend(todo, {uid: createdAt});
+                self.todoAdded(todoWithId);
+            });
         },
-        todoAdded: function (response) {
-            this.state.data.push(response.body);
+        todoAdded: function (todo) {
+            this.state.data.push(todo);
             this.refreshState();
         },
         refreshState: function () {
