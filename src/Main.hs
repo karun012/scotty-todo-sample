@@ -44,12 +44,13 @@ app = do
     post "/todo" $ do
         requestBody <- body
         let requestBodyAsString = B.unpack requestBody
-        result <- webM $ addTodoItem requestBodyAsString
+        let (result, w) = addTodoItem requestBodyAsString
         case result of
             Success -> do
-                status status200
-                identifier <- webM $ gets nextId
-                setHeader "Location" (pack (show identifier))
+                    webM w
+                    status status200
+                    identifier <- webM $ gets nextId
+                    setHeader "Location" (pack (show identifier))
             Failure errorMessage -> do
-                                status status404
-                                text $ fromString $ show errorMessage
+                              status status404
+                              text $ fromString $ show errorMessage

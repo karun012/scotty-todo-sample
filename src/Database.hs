@@ -49,11 +49,17 @@ addTodo json = let parsed = decode (B.pack json) :: Maybe Todo
                       Nothing -> Left "Cannot parse JSON to Todo"
                       Just todo -> Right todo
 
-addTodoItem :: Monad m => String -> m Result
-addTodoItem json = let parsed = addTodo json
+addTodoItem :: String -> (Result, WebM ())
+addTodoItem json = let parsed = parseJsonToTodo json
                    in case parsed of
-                          Left error -> return (Failure error)
+                          Left error -> (Failure error, modify id)
                           Right t -> let newState = modify $ \st -> let nextUid = nextId st + 1
                                                                         todoWithId = Todo (text t) (Just nextUid)
                                                                     in st { nextId = nextUid, todos = M.insert nextUid todoWithId (todos st) }
-                                     in return (Success)
+                                     in (Success, newState)
+
+parseJsonToTodo :: String -> Either String Todo
+parseJsonToTodo json  = let parsed = decode (B.pack json) :: Maybe Todo
+                        in case parsed of
+                               Nothing -> Left "Cannot parse JSON to Todo"
+                               Just todo -> Right todo
