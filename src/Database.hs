@@ -43,12 +43,6 @@ instance FromJSON Todo where
 instance ToJSON Todo where
     toJSON (Todo text uid) = object ["text" .= text, "uid" .= uid]
 
-addTodo :: String -> Either String Todo
-addTodo json = let parsed = decode (B.pack json) :: Maybe Todo
-               in case parsed of
-                      Nothing -> Left "Cannot parse JSON to Todo"
-                      Just todo -> Right todo
-
 addTodoItem :: String -> (Result, WebM ())
 addTodoItem json = let parsed = parseJsonToTodo json
                    in case parsed of
