@@ -62,7 +62,7 @@ define(['react', 'http', 'underscore', 'underscore.string'], function (React, ht
                 arr1.push.apply(arr1, arr2);
             };
             http({uri: '/todos', method: 'GET'}).then(function (response) {
-                pushArray(self.state.data, response.body);
+                pushArray(self.state.data, response);
                 self.refreshState();
             });
         },
