@@ -2,6 +2,7 @@ module DatabaseSpec where
 
 import Test.Hspec
 import Database
+import Types
 
 import Data.Default
 import Control.Concurrent.STM
