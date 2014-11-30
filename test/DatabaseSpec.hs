@@ -37,3 +37,15 @@ spec = do
             doesNotExist <- runM $ findTodoById 99
             todoItem `shouldBe` (Just $ Todo { text = Just "do stuff", uid = Just 1})
             doesNotExist `shouldBe` Nothing
+        it "get all todos" $ do
+            sync <- newTVarIO def
+            let runM m = runReaderT (runWebM m) sync
+            let (result, w) = addTodoItem "{\"text\" : \"do stuff\" }"
+
+            noTodos <- runM getTodos
+
+            runM w
+            todoItems <- runM getTodos
+
+            noTodos `shouldBe` []
+            todoItems `shouldBe` [Todo { text = Just "do stuff", uid = Just 1}]

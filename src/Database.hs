@@ -61,3 +61,6 @@ parseJsonToTodo json  = let parsed = decode (B.pack json) :: Maybe Todo
 findTodoById :: Int -> WebM (Maybe Todo)
 findTodoById uid = gets (\st -> let todoItems = (todos st) 
                                 in M.lookup uid todoItems)
+
+getTodos :: WebM [Todo]
+getTodos = gets (\st -> M.elems (todos st))
