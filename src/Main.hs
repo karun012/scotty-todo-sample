@@ -30,8 +30,8 @@ app = do
     get "/" $ do 
         file "./static/html/index.html"
     get "/todos" $ do
-        todoItems <- webM $ gets todos
-        json $ M.elems todoItems
+        todoItems <- webM getTodos
+        json todoItems
     get "/:todoId" $ do 
         todoId <- param "todoId"
         todo <- webM $ findTodoById todoId
