@@ -34,8 +34,7 @@ app = do
         json $ M.elems todoItems
     get "/:todoId" $ do 
         todoId <- param "todoId"
-        todoItems <- webM $ gets todos
-        let todo = M.lookup todoId todoItems
+        todo <- webM $ findTodoById todoId
         case todo of
             Nothing -> do 
                     status status404
