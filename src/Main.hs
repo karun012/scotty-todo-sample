@@ -7,13 +7,17 @@ import Data.String
 
 import Control.Concurrent.STM
 import Control.Monad.Reader 
+import System.Environment
 
 import Types
 import App
 
+main :: IO ()
 main = do 
+    env <- getEnvironment
     sync <- newTVarIO def
     let runM m = runReaderT (runWebM m) sync
         runActionToIO = runM
-    scottyT 3000 runM runActionToIO app
- 
+    let port = maybe 8080 read $ lookup "PORT" env
+
+    scottyT port runM runActionToIO app
